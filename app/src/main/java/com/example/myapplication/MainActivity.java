@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
         final String lastQuery = saveSearchQueryService.getLastQuery();
 
-        if(lastQuery == ""){
+        if(lastQuery.equals("")){
             setSeriesRecyclerViewContent(allSeries);
         }else{
             setSeriesSearchText(lastQuery);
