@@ -1,8 +1,6 @@
 package com.example.myapplication;
 
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
@@ -13,9 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.zip.Inflater;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -79,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
     private void onSeriesNotFound(){
         Toast.makeText(this, R.string.series_not_found,Toast.LENGTH_SHORT).show();
     }
+    private void setSeriesSearchText(String query){
+        series_search_text.setText(query);
+    }
 //--------------------------------PrePresenter---------------
 
 
@@ -86,9 +85,12 @@ public class MainActivity extends AppCompatActivity {
     private List<SeriesModel> allSeries;
     private MyBackendService myBackendService;
 
+    private SaveSearchQueryService saveSearchQueryService;
+
     private void initServices(){
         Retrofit retrofit = new Retrofit.Builder().baseUrl("https://landyrev.site/api/").addConverterFactory(GsonConverterFactory.create()).build();
         myBackendService = retrofit.create(MyBackendService.class);
+        saveSearchQueryService = new SaveSearchQueryFromSharedPreferences(this);
     }
 
     private void initSeriesList(){
@@ -96,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<SeriesModel>> call, Response<List<SeriesModel>> response) {
                 allSeries = response.body();
-                setSeriesRecyclerViewContent(response.body());
             }
 
             @Override
@@ -104,6 +105,25 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getBaseContext(),"Internal error",Toast.LENGTH_SHORT).show();
             }
         });
+
+        final String lastQuery = saveSearchQueryService.getLastQuery();
+
+        if(lastQuery == ""){
+            setSeriesRecyclerViewContent(allSeries);
+        }else{
+            setSeriesSearchText(lastQuery);
+            myBackendService.searchResult(lastQuery).enqueue(new Callback<List<SeriesModel>>() {
+                @Override
+                public void onResponse(Call<List<SeriesModel>> call, Response<List<SeriesModel>> response) {
+                    setSeriesRecyclerViewContent(response.body());
+                }
+
+                @Override
+                public void onFailure(Call<List<SeriesModel>> call, Throwable t) {
+                    Toast.makeText(getApplicationContext(),"Internal error",Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
     private void onSearchButtonClick(){
         myBackendService.searchResult(searchQueryString).enqueue(new Callback<List<SeriesModel>>() {
@@ -111,6 +131,8 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<List<SeriesModel>> call, Response<List<SeriesModel>> response) {
                 if(response.body().isEmpty()){
                     onSeriesNotFound();
+                }else{
+                    saveSearchQueryService.saveQuery(searchQueryString);
                 }
                 setSeriesRecyclerViewContent(response.body());
             }
@@ -121,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     private void onSearchTextChanged(String newText){
         searchQueryString = newText;
         if(searchQueryString.isEmpty()){
