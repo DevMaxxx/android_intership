@@ -1,7 +1,8 @@
 package com.example.myapplication;
 
-public interface SaveSearchQueryService {
+public interface SaveSearchQueryStorage {
     void saveQuery(String query);
+
     String getLastQuery();
 }
 

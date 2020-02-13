@@ -3,7 +3,7 @@ package com.example.myapplication;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public class SaveSearchQueryFromSharedPreferences implements SaveSearchQueryService {
+public class SaveSearchQueryFromSharedPreferences implements SaveSearchQueryStorage {
 
     private SharedPreferences preferences;
 
@@ -17,12 +17,12 @@ public class SaveSearchQueryFromSharedPreferences implements SaveSearchQueryServ
     @Override
     public void saveQuery(String query) {
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(LAST_STRING_ID,query);
+        editor.putString(LAST_STRING_ID, query);
         editor.apply();
     }
 
     @Override
     public String getLastQuery() {
-        return preferences.getString("LAST_QUERY","");
+        return preferences.getString("LAST_QUERY", "");
     }
 }
