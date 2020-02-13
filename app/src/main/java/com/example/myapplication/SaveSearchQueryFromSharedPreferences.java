@@ -5,17 +5,19 @@ import android.content.SharedPreferences;
 
 public class SaveSearchQueryFromSharedPreferences implements SaveSearchQueryService {
 
-    SharedPreferences preferences;
-    SharedPreferences.Editor editor;
+    private SharedPreferences preferences;
+
+    private static final String QUEERY_STORE = "QUERY_STORE";
+    private static final String LAST_STRING_ID = "LAST_STRING";
 
     public SaveSearchQueryFromSharedPreferences(Context context) {
-        preferences = context.getSharedPreferences("QUERY_STORE", context.MODE_PRIVATE);
-        editor = preferences.edit();
+        preferences = context.getSharedPreferences(QUEERY_STORE, context.MODE_PRIVATE);
     }
 
     @Override
     public void saveQuery(String query) {
-        editor.putString("LAST_QUERY",query);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(LAST_STRING_ID,query);
         editor.apply();
     }
 
