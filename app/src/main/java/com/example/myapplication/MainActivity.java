@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     private List<SeriesModel> allSeries;
     private MyBackendService myBackendService;
 
-    private SaveSearchQueryStorage saveSearchQueryService;
+    private ISaveSearchQueryStorage saveSearchQueryService;
 
     private void initServices() {
         Retrofit retrofit = new Retrofit.Builder().baseUrl("https://landyrev.site/api/").addConverterFactory(GsonConverterFactory.create()).build();

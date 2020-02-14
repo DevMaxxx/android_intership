@@ -1,17 +1,19 @@
 package com.example.myapplication;
 
+import android.app.Application;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 
-public class SaveSearchQueryFromSharedPreferences implements SaveSearchQueryStorage {
+public class SaveSearchQueryFromSharedPreferences implements ISaveSearchQueryStorage {
 
     private SharedPreferences preferences;
 
     private static final String QUEERY_STORE = "QUERY_STORE";
     private static final String LAST_STRING_ID = "LAST_STRING";
 
-    public SaveSearchQueryFromSharedPreferences(Context context) {
-        preferences = context.getSharedPreferences(QUEERY_STORE, context.MODE_PRIVATE);
+    public SaveSearchQueryFromSharedPreferences() {
+        android.content.
     }
 
     @Override
